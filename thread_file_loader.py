@@ -1,5 +1,5 @@
-from .thread import Thread
-def load_thread_from_file(filename: str):
+from thread import Thread
+def load_threads_from_file(filename: str):
     threads = []
 
     with open(filename, 'r') as file:
@@ -20,6 +20,4 @@ def load_thread_from_file(filename: str):
 
             threads.append(Thread(thread_id, arrival_time, burst_time, priority))
 
-    # sorting the threads by arrival time
-    threads.sort(key=lambda t: t.arrival)
     return threads
