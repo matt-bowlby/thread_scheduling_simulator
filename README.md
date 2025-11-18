@@ -1,1 +1,1 @@
-# ai_memory_management
+# Thread Scheduling Simulator
