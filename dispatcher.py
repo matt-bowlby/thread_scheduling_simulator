@@ -1,32 +1,31 @@
 from thread import Thread
 from collections import deque
+from algorithms import Algorithm
 
 class Dispatcher:
-	def __init__(self, threads: list[Thread], quantum: int = 2):
+	def __init__(self, threads: list[Thread], algorithm: Algorithm):
 		self.time_step: int = 0
 		self.threads: list[Thread] = threads
-		self.quantum: int = quantum  # Default quantum time
-		self.ready_queue: deque[Thread] = deque() # Holds Thread objects that have arrived and are waiting to run
+		self.algorithm: Algorithm = algorithm
 		self.gantt_chart: list[tuple[str,int]] = [] # store tuples representing who ran at each time unit
 
 	def add_thread(self, thread: Thread):
 		self.threads.append(thread)
 
 	def tick(self):
-		self.time_step += 1
-		# Add newly arrived threads to the ready queue
-		for th in self.threads: 
+		for th in self.threads:
 			if th.arrival == self.time_step:
-				self.ready_queue.append(th)
+				self.algorithm.threads.append(th)
+		# Add newly arrived threads to the ready queue
+		current_thread = self.algorithm.tick(self.time_step)
+		# print(current_thread)
+		if current_thread:
+			print(f"Time {self.time_step}: Running Thread {current_thread.thread_id}")
+			self.gantt_chart.append((current_thread.thread_id, self.time_step))
+
+		self.time_step += 1
 
 	def reset(self) -> None:
 		self.time_step = 0
 		for thread in self.threads:
 			thread.reset()
-
-	def get_next_thread(self) -> Thread | None:
-		# Simple FCFS scheduling for demonstration
-		available_threads = [t for t in self.threads if t.arrival <= self.time_step and not t.is_finished()]
-		if not available_threads:
-			return None
-		return min(available_threads, key=lambda t: t.arrival)

@@ -1,3 +1,4 @@
+from algorithms.first_come_first_serve import FCFS
 from dispatcher import Dispatcher
 from thread_file_loader import load_threads_from_file
 
@@ -10,7 +11,8 @@ def main():
 	next_tick = time.time() + tick_interval
 
 	file_name = "threads_test_cases.txt"
-	dispatcher = Dispatcher(load_threads_from_file(file_name))
+	algorithm = FCFS([])
+	dispatcher = Dispatcher(load_threads_from_file(file_name), algorithm)
 
 	while True:
 		dispatcher.tick()

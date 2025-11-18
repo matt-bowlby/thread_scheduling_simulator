@@ -45,11 +45,11 @@ class Thread:
         self.turnaround_time = -1
         self.last_run_time = -1
 
-    def run(self, current_time_step: int) -> None:
+    def tick(self, time_step: int) -> None:
         self.remaining -= 1
-        self.last_run_time = current_time_step
+        self.last_run_time = time_step
         if self.start_time == -1:
-            self.start_time = current_time_step
+            self.start_time = time_step
         if self.is_finished():
-            self.completion_time = current_time_step + 1
+            self.completion_time = time_step + 1
             self.compute_metrics()
