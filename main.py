@@ -20,9 +20,9 @@ def main():
 	#algorithm = FCFS([])
 	#algorithm = Priority([])
 	#algorithm = SJF([])
-	#algorithm = RR([], quantum=2)
+	#algorithm = RR([], quantum=2) # ARE WE PLANNING TO ASK TO THE USER FOR THR QUANTUM? 
 	algorithm = PreemptiveSJF([])
-	#algorithm = MultilevelQueue([], quantum=2)
+	#algorithm = MultilevelQueue([], quantum=2)ARE WE PLANNING TO ASK TO THE USER FOR THR QUANTUM? 
 	dispatcher = Dispatcher(load_threads_from_file(file_name), algorithm)
 
 	while True:
