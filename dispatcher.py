@@ -29,3 +29,7 @@ class Dispatcher:
 		self.time_step = 0
 		for thread in self.threads:
 			thread.reset()
+
+	def is_finished(self): 
+		# making sure the simulation stop when the threads are finished
+		return all(th.is_finished() for th in self.threads)
