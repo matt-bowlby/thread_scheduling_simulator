@@ -4,8 +4,11 @@ from algorithms.priority import Priority
 from algorithms.round_robin import RR
 from algorithms.preemptive_shortest_job_first import PreemptiveSJF
 from algorithms.multilevel_queue import MultilevelQueue
+
 from dispatcher import Dispatcher
 from thread_file_loader import load_threads_from_file
+from metrics import calculate_metrics
+from visualize import print_gantt_chart, print_metrics_table
 
 TICK_RATE = 5 # Ticks per second
 
@@ -17,15 +20,18 @@ def main():
 
 	file_name = "threads_test_cases.txt"
 	#file_name = "RR_threads_test_case" # test case for Round Robin
+
 	#algorithm = FCFS([])
 	#algorithm = Priority([])
 	#algorithm = SJF([])
 	#algorithm = RR([], quantum=2) # ARE WE PLANNING TO ASK TO THE USER FOR THR QUANTUM? 
 	algorithm = PreemptiveSJF([])
-	#algorithm = MultilevelQueue([], quantum=2)ARE WE PLANNING TO ASK TO THE USER FOR THR QUANTUM? 
+	#algorithm = MultilevelQueue([], quantum=2)ARE WE PLANNING TO ASK TO THE USER FOR THR QUANTUM?
+
 	dispatcher = Dispatcher(load_threads_from_file(file_name), algorithm)
 
-	while True:
+	# Main loop
+	while not dispatcher.is_finished():
 		dispatcher.tick()
 
 		# Wait until the next tick
@@ -33,6 +39,18 @@ def main():
 		if sleep_duration > 0:
 			time.sleep(sleep_duration)
 		next_tick += tick_interval
+
+	# Simulation Finished
+	total_time = dispatcher.time_step
+	print("\n---------- SIMULATION COMPLETE ----------")
+	print(f"Total Time: {total_time} ticks\n")
+
+	# Print Gantt Chart
+	print_gantt_chart(dispatcher.gantt_chart)
+
+	# Print Metrics
+	metrics = calculate_metrics(dispatcher.threads, total_time)
+	print_gantt_chart(metrics, dispatcher.threads)
 
 if __name__ == "__main__":
 	main()
