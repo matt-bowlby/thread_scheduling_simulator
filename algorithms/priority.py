@@ -2,28 +2,24 @@ from .algorithm import Algorithm
 from thread import Thread
 
 class Priority(Algorithm):
-	def __init__(self, threads: list[Thread]) -> None:
-		super().__init__(threads)
-		self.active_thread: Thread | None = None
-
-	def tick(self, time_step: int) -> Thread | None:
+	def tick(self, threads: list[Thread], time_step: int) -> Thread | None:
 		'''
 		Preemptive Priority Scheduling Algorith
 		Pick the highest priority (lowest number) thread that has arrived
 		If a new higher priority thread arrives, preempt the current active thread
 		'''
 		# Gather all thread that have arrived and not finished
-		available = [th for th in self.threads if th.arrival <= time_step and not th.is_finished()]
-		if not available: 
+		available = [th for th in threads if th.arrival <= time_step and not th.is_finished()]
+		if not available:
 			# no threads available to run this tick
 			self.active_thread = None
 			return None
-		
+
 		# Choose best thread based on proirity, then arrivak time
 		highest_priority_thread = min(available, key=lambda th: (th.priority, th.arrival))
 
 		# Preempt if needed
-		if (self.active_thread is None or 
+		if (self.active_thread is None or
 		   self.active_thread.is_finished() or
 		   highest_priority_thread.priority < self.active_thread.priority):
 			self.active_thread = highest_priority_thread
@@ -32,4 +28,3 @@ class Priority(Algorithm):
 		self.active_thread.tick(time_step)
 		return self.active_thread
 
-		

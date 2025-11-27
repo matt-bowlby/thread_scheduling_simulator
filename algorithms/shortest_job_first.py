@@ -2,11 +2,7 @@ from .algorithm import Algorithm
 from thread import Thread
 
 class SJF(Algorithm):
-	def __init__(self, threads: list[Thread]) -> None:
-		super().__init__(threads)
-		self.active_thread: Thread | None = None
-
-	def tick(self, time_step: int) -> Thread | None:
+	def tick(self, threads: list[Thread], time_step: int) -> Thread | None:
 		'''
 		Non-preemptive Shortest Job First Scheduling Algorithm
 		Pick the thread with the shortest remaining time that has arrived
@@ -15,13 +11,13 @@ class SJF(Algorithm):
 		# If there is no active thread or it finished, pick next thread
 		if self.active_thread is None or self.active_thread.is_finished():
 			if self.active_thread and self.active_thread.is_finished():
-				self.active_thread = None 
+				self.active_thread = None
 
 			# Gather all arrived and not finished threads
-			available = [th for th in self.threads if th.arrival <= time_step and not th.is_finished()]
+			available = [th for th in threads if th.arrival <= time_step and not th.is_finished()]
 			if not available:
 				return None
-			
+
 			# pick the one with the shortest remaining time
 			self.active_thread = min(available, key=lambda th: (th.burst, th.arrival))
 

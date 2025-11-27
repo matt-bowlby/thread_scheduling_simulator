@@ -2,12 +2,12 @@ class Thread:
     '''
     Thread Control Block (TCB) used in thread scheduling simulations
     '''
-    def __init__(self, thread_id: str, arrival_time: int, burst_time: int, priotity: int):
+    def __init__(self, thread_id: str, arrival_time: int, burst_time: int, priority: int):
         # Static attributes from input
         self.thread_id: str = thread_id
         self.arrival: int = arrival_time     # when the thread arrives in steps
         self.burst: int = burst_time         # how long it needs the CPU in steps
-        self.priority: int = priotity        # for priority scheduling
+        self.priority: int = priority        # for priority scheduling
 
         # Simulation state
         self.remaining: int = burst_time     # decrementing as thread runs
@@ -44,6 +44,7 @@ class Thread:
         self.waiting_time = -1
         self.turnaround_time = -1
         self.last_run_time = -1
+        self.last_start_time = -1
 
     def tick(self, time_step: int) -> None:
         self.remaining -= 1
