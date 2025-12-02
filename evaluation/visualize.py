@@ -35,9 +35,6 @@ def display_gantt_chart(gantt_data: list[tuple[str, int]]):
     last_time = gantt_data[-1][1] + 1
     merged.append(dict(Task=current_thread, Start=start_time, Finish=last_time))
 
-    # Remove IDLE periods
-    merged = [num for num in merged if num["Task"] != "IDLE"]
-
     # Convert to DataFrame
     df = pd.DataFrame(merged)
     try:
