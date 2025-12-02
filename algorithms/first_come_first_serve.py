@@ -1,23 +1,27 @@
 from .algorithm import Algorithm
-from thread import Thread
+from thread_handling.thread import Thread
+
 
 class FCFS(Algorithm):
-	def tick(self, threads: list[Thread], time_step: int) -> Thread | None:
-		'''
-		FCFS picks the first thread based on arrival
-		'''
-		# If no active thread or active thread is finished, pick next
-		if self.active_thread is None or self.active_thread.is_finished():
-			# Get all non-finished threads
-			available=[t for t in threads if (not t.is_finished()) and (t.arrival <= time_step)]
-			# If no available threads, return
-			if not available:
-				return None
-			# Pick the one with the earliest arrival time
-			self.active_thread = min(available, key=lambda t: t.arrival)
+    def tick(self, threads: list[Thread], time_step: int) -> Thread | None:
+        """
+        Runs the FCFS scheduling algorithm for the current tick. FCFS selects the thread that arrived first among the available threads.
+        """
 
-		# Tick the active thread
-		self.active_thread.tick(time_step)
+        # If there's no active thread or the active thread is finished, pick next thread.
+        if self.active_thread is None or self.active_thread.is_finished():
+            # Get all non-finished threads
+            available = [
+                t for t in threads if (not t.is_finished()) and (t.arrival <= time_step)
+            ]
+            # If no available threads, return None
+            if not available:
+                return None
+            # Pick the one with the earliest arrival time
+            self.active_thread = min(available, key=lambda t: t.arrival)
 
-		# Return the active thread
-		return self.active_thread
+        # Tick the active thread
+        self.active_thread.tick(time_step)
+
+        # Return the active thread
+        return self.active_thread

@@ -1,14 +1,18 @@
 from collections import deque
 from .algorithm import Algorithm
-from thread import Thread
+from thread_handling.thread import Thread
 
 
 class MultilevelQueue(Algorithm):
-    def __init__(self, quantum: int) -> None:
+
+    def __init__(self, quantum: int, priority_threshold: int = 2) -> None:
         super().__init__()
         # Two queues: high priority (RR), low priority (FCFS)
         self.high_queue = deque()  # RR queue (priority 1-2)
         self.low_queue = deque()  # FCFS queue (priority >= 3)
+        self.priority_threshold = (
+            priority_threshold  # Priority <= this goes to high queue
+        )
         self.quantum = quantum
         self.time_used = (
             0  # how long the active thread has used the CPU in the current quantum
@@ -16,10 +20,11 @@ class MultilevelQueue(Algorithm):
 
     def _add_arrivals(self, threads: list[Thread], time_step: int):
         """
-        Move newly arrived thread to an appropiate queue"""
+        Move newly arrived thread to an appropriate queue.
+        """
         for th in threads:
             if th.arrival == time_step:
-                if th.priority <= 2:
+                if th.priority <= self.priority_threshold:
                     self.high_queue.append(th)
                 else:
                     self.low_queue.append(th)
@@ -30,7 +35,7 @@ class MultilevelQueue(Algorithm):
         High priority queue (priority 1-2) uses Round Robin
         Low priority queue (priority >=3) uses FCFS
         """
-        # Add newly arrived threads to appropiate queue
+        # Add newly arrived threads to appropriate queue
         self._add_arrivals(threads, time_step)
 
         # If active thread finished, clear it
@@ -50,7 +55,7 @@ class MultilevelQueue(Algorithm):
             # if no active thread, pick next from queue
             if self.active_thread is None:
                 self.active_thread = self.high_queue.popleft()
-            # if quantum has experied
+            # if quantum has expired
             elif self.time_used >= self.quantum:
                 # Requeue if not finished
                 if not self.active_thread.is_finished():

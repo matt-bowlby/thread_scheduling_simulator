@@ -1,35 +1,42 @@
-from thread import Thread
-from collections import deque
+from thread_handling.thread import Thread
 from algorithms import Algorithm
 
+
 class Dispatcher:
-	def __init__(self, threads: list[Thread], algorithm: Algorithm):
-		self.time_step: int = 0
-		self.threads: list[Thread] = threads
-		self.algorithm: Algorithm = algorithm
-		self.gantt_chart: list[tuple[str, int]] = [] # store tuples representing who ran at each time unit
+    """
+    Manages the scheduling and execution of threads using a specified algorithm.
+    """
 
-	def add_thread(self, thread: Thread):
-		self.threads.append(thread)
+    def __init__(self, threads: list[Thread], algorithm: Algorithm) -> None:
+        self.time_step: int = 0  # Current time step of the simulation
+        self.threads: list[Thread] = threads  # All threads to be scheduled
+        self.algorithm: Algorithm = algorithm  # Scheduling algorithm to use
+        self.gantt_chart: list[tuple[str, int]] = []  # List to store Gantt chart data
 
-	def tick(self):
-		# Add newly arrived threads to the ready queue
-		current_thread = self.algorithm.tick(self.threads, self.time_step)
-		if current_thread:
-			print(f"Time {self.time_step}: Running Thread {current_thread.thread_id}")
-			self.gantt_chart.append((current_thread.thread_id, self.time_step))
-		else:
-			print(f"Time {self.time_step}: CPU IDLE")
-			self.gantt_chart.append(("IDLE", self.time_step))
+    def tick(self) -> None:
+        """Advances the simulation by one time step."""
+        # Get currently active thread from the algorithm
+        current_thread = self.algorithm.tick(self.threads, self.time_step)
 
-		self.time_step += 1
+        # Log the current thread in the Gantt chart
+        if current_thread:
+            print(f"Time {self.time_step}: Running Thread {current_thread.thread_id}")
+            self.gantt_chart.append((current_thread.thread_id, self.time_step))
+        # If no thread is active, log idle time
+        else:
+            print(f"Time {self.time_step}: CPU IDLE")
+            self.gantt_chart.append(("IDLE", self.time_step))
 
-	def reset(self) -> None:
-		self.time_step = 0
-		self.algorithm.reset()
-		for thread in self.threads:
-			thread.reset()
+        # Advance time step
+        self.time_step += 1
 
-	def is_finished(self):
-		# making sure the simulation stop when the threads are finished
-		return all(th.is_finished() for th in self.threads)
+    def reset(self) -> None:
+        """Resets the dispatcher and all threads for a new simulation."""
+        self.time_step = 0
+        self.algorithm.reset()
+        for thread in self.threads:
+            thread.reset()
+
+    def is_finished(self) -> bool:
+        """Checks if all threads have finished execution."""
+        return all(th.is_finished() for th in self.threads)
